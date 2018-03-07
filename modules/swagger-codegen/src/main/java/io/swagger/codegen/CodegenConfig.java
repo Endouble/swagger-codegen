@@ -51,7 +51,11 @@ public interface CodegenConfig {
 
     String toApiName(String name);
 
+    String toAcceptanceName(String name);
+
     String toApiVarName(String name);
+
+    String toAcceptanceVarName(String name);
 
     String toModelName(String name);
 
@@ -131,6 +135,8 @@ public interface CodegenConfig {
 
     String toApiFilename(String name);
 
+    String toAcceptanceFilename(String name);
+
     String toModelFilename(String name);
 
     String toApiTestFilename(String name);
@@ -144,6 +150,8 @@ public interface CodegenConfig {
     String toModelImport(String name);
 
     String toApiImport(String name);
+
+    String toAcceptanceImport(String name);
 
     void addOperationToGroup(String tag, String resourcePath, Operation operation, CodegenOperation co, Map<String, List<CodegenOperation>> operations);
 
@@ -162,6 +170,8 @@ public interface CodegenConfig {
     void postProcessParameter(CodegenParameter parameter);
 
     String apiFilename(String templateName, String tag);
+
+    String acceptanceFilename(String templateName, String tag);
 
     String apiTestFilename(String templateName, String tag);
 

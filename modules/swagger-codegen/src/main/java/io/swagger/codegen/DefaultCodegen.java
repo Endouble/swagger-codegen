@@ -93,7 +93,7 @@ public class DefaultCodegen implements CodegenConfig {
     protected Set<String> reservedWords = new HashSet<String>();
     protected Set<String> languageSpecificPrimitives = new HashSet<String>();
     protected Map<String, String> importMapping = new HashMap<String, String>();
-    protected String modelPackage = "", apiPackage = "", fileSuffix;
+    protected String modelPackage = "", apiPackage = "", acceptancePackage = "", fileSuffix;
     protected String modelNamePrefix = "", modelNameSuffix = "";
     protected String testPackage = "";
     protected Map<String, String> apiTemplateFiles = new HashMap<String, String>();
@@ -146,6 +146,10 @@ public class DefaultCodegen implements CodegenConfig {
 
         if (additionalProperties.containsKey(CodegenConstants.API_PACKAGE)) {
             this.setApiPackage((String) additionalProperties.get(CodegenConstants.API_PACKAGE));
+        }
+
+        if (additionalProperties.containsKey(CodegenConstants.ACCEPTANCE_PACKAGE)) {
+            this.setAcceptancePackage((String) additionalProperties.get(CodegenConstants.ACCEPTANCE_PACKAGE));
         }
 
         if (additionalProperties.containsKey(CodegenConstants.SORT_PARAMS_BY_REQUIRED_FLAG)) {
@@ -378,6 +382,10 @@ public class DefaultCodegen implements CodegenConfig {
         return apiPackage;
     }
 
+    public String acceptancePackage() {
+        return acceptancePackage;
+    }
+
     public String fileSuffix() {
         return fileSuffix;
     }
@@ -434,6 +442,10 @@ public class DefaultCodegen implements CodegenConfig {
         return outputFolder + "/" + apiPackage().replace('.', '/');
     }
 
+    public String acceptanceFileFolder() {
+        return outputFolder + "/" + acceptancePackage().replace('.', '/');
+    }
+
     public String modelFileFolder() {
         return outputFolder + "/" + modelPackage().replace('.', '/');
     }
@@ -447,6 +459,10 @@ public class DefaultCodegen implements CodegenConfig {
     }
 
     public String apiDocFileFolder() {
+        return outputFolder;
+    }
+
+    public String acceptanceDocFileFolder() {
         return outputFolder;
     }
 
@@ -506,6 +522,10 @@ public class DefaultCodegen implements CodegenConfig {
         this.apiPackage = apiPackage;
     }
 
+    public void setAcceptancePackage(String acceptancePackage) {
+        this.acceptancePackage = acceptancePackage;
+    }
+
     public void setSortParamsByRequiredFlag(Boolean sortParamsByRequiredFlag) {
         this.sortParamsByRequiredFlag = sortParamsByRequiredFlag;
     }
@@ -539,6 +559,16 @@ public class DefaultCodegen implements CodegenConfig {
     }
 
     /**
+     * Return the file name of the Acceptance Test
+     *
+     * @param name the file name of the Acceptance
+     * @return the file name of the Acceptance
+     */
+    public String toAcceptanceFilename(String name) {
+        return toAcceptanceName(name);
+    }
+
+    /**
      * Return the file name of the Api Documentation
      *
      * @param name the file name of the Api
@@ -546,6 +576,16 @@ public class DefaultCodegen implements CodegenConfig {
      */
     public String toApiDocFilename(String name) {
         return toApiName(name);
+    }
+
+    /**
+     * Return the file name of the Acceptance Documentation
+     *
+     * @param name the file name of the Acceptance
+     * @return the file name of the Acceptance
+     */
+    public String toAcceptanceDocFilename(String name) {
+        return toAcceptanceName(name);
     }
 
     /**
@@ -565,6 +605,16 @@ public class DefaultCodegen implements CodegenConfig {
      * @return the snake-cased variable name
      */
     public String toApiVarName(String name) {
+        return snakeCase(name);
+    }
+
+    /**
+     * Return the variable name in the Acceptance
+     *
+     * @param name the varible name of the Acceptance
+     * @return the snake-cased variable name
+     */
+    public String toAcceptanceVarName(String name) {
         return snakeCase(name);
     }
 
@@ -690,6 +740,16 @@ public class DefaultCodegen implements CodegenConfig {
      */
     public String toApiImport(String name) {
         return apiPackage() + "." + name;
+    }
+
+    /**
+     * Return the fully-qualified "Api" name for import
+     *
+     * @param name the name of the "Api"
+     * @return the fully-qualified "Api" name for import
+     */
+    public String toAcceptanceImport(String name) {
+        return acceptancePackage() + "." + name;
     }
 
     /**
@@ -1044,6 +1104,20 @@ public class DefaultCodegen implements CodegenConfig {
             return "DefaultApi";
         }
         return initialCaps(name) + "Api";
+    }
+
+    /**
+     * Output the API (class) name (capitalized) ending with "Api"
+     * Return DefaultApi if name is empty
+     *
+     * @param name the name of the Api
+     * @return capitalized Api name ending with "Api"
+     */
+    public String toAcceptanceName(String name) {
+        if (name.length() == 0) {
+            return "DefaultAcceptance";
+        }
+        return "test" + initialCaps(name) + "Acceptance";
     }
 
     /**
@@ -2902,6 +2976,11 @@ public class DefaultCodegen implements CodegenConfig {
     public String apiFilename(String templateName, String tag) {
         String suffix = apiTemplateFiles().get(templateName);
         return apiFileFolder() + '/' + toApiFilename(tag) + suffix;
+    }
+
+    public String acceptanceFilename(String templateName, String tag) {
+        String suffix = apiTemplateFiles().get(templateName);
+        return acceptanceFileFolder() + '/' + toAcceptanceFilename(tag) + suffix;
     }
 
     /**

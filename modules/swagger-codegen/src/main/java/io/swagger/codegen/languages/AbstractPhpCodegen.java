@@ -49,9 +49,11 @@ public abstract class AbstractPhpCodegen extends DefaultCodegen implements Codeg
     protected String testBasePath = "test";
     protected String docsBasePath = "docs";
     protected String apiDirName = "Api";
+    protected String acceptanceDirName = "Acceptance";
     protected String modelDirName = "Model";
     protected String variableNamingConvention= "snake_case";
     protected String apiDocPath = docsBasePath + File.separator + apiDirName;
+    protected String acceptanceDocPath = docsBasePath + File.separator + acceptanceDirName;
     protected String modelDocPath = docsBasePath + File.separator + modelDirName;
 
     public AbstractPhpCodegen() {
@@ -64,6 +66,8 @@ public abstract class AbstractPhpCodegen extends DefaultCodegen implements Codeg
         apiDocTemplateFiles.put("api_doc.mustache", ".md");
 
         apiPackage = invokerPackage + "\\" + apiDirName;
+        acceptancePackage = invokerPackage + "\\" + acceptanceDirName;
+        acceptancePackage = acceptanceDirName;
         modelPackage = invokerPackage + "\\" + modelDirName;
 
         setReservedWordsLowerCase(
@@ -125,6 +129,7 @@ public abstract class AbstractPhpCodegen extends DefaultCodegen implements Codeg
 
         cliOptions.add(new CliOption(CodegenConstants.MODEL_PACKAGE, CodegenConstants.MODEL_PACKAGE_DESC));
         cliOptions.add(new CliOption(CodegenConstants.API_PACKAGE, CodegenConstants.API_PACKAGE_DESC));
+        cliOptions.add(new CliOption(CodegenConstants.ACCEPTANCE_PACKAGE, CodegenConstants.ACCEPTANCE_PACKAGE_DESC));
         cliOptions.add(new CliOption(VARIABLE_NAMING_CONVENTION, "naming convention of variable name, e.g. camelCase.")
                 .defaultValue("snake_case"));
         cliOptions.add(new CliOption(CodegenConstants.INVOKER_PACKAGE, "The main namespace to use for all classes. e.g. Yay\\Pets"));
@@ -211,6 +216,7 @@ public abstract class AbstractPhpCodegen extends DefaultCodegen implements Codeg
 
         // make api and model doc path available in mustache template
         additionalProperties.put("apiDocPath", apiDocPath);
+        additionalProperties.put("acceptanceDocPath", acceptanceDocPath);
         additionalProperties.put("modelDocPath", modelDocPath);
 
         // make test path available in mustache template
@@ -291,6 +297,11 @@ public abstract class AbstractPhpCodegen extends DefaultCodegen implements Codeg
     }
 
     @Override
+    public String acceptanceDocFileFolder() {
+        return (outputFolder + File.separator + getPackagePath() + File.separator + acceptanceDocPath);
+    }
+
+    @Override
     public String modelDocFileFolder() {
         return (outputFolder + File.separator + getPackagePath() + File.separator + modelDocPath);
     }
@@ -303,6 +314,11 @@ public abstract class AbstractPhpCodegen extends DefaultCodegen implements Codeg
     @Override
     public String toApiDocFilename(String name) {
         return toApiName(name);
+    }
+
+    @Override
+    public String toAcceptanceDocFilename(String name) {
+        return toAcceptanceName(name);
     }
 
     @Override

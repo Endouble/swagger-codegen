@@ -414,6 +414,121 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
 
     }
 
+    private void generateAcceptance(List<File> files, List<Object> allOperations, List<Object> allModels) {
+        Map<String, List<CodegenOperation>> paths = processPaths(this.openAPI.getPaths());
+        Set<String> apisToGenerate = null;
+        String apiNames = System.getProperty("apis");
+        if(apiNames != null && !apiNames.isEmpty()) {
+            apisToGenerate = new HashSet<String>(Arrays.asList(apiNames.split(",")));
+        }
+        if(apisToGenerate != null && !apisToGenerate.isEmpty()) {
+            Map<String, List<CodegenOperation>> updatedPaths = new TreeMap<String, List<CodegenOperation>>();
+            for(String m : paths.keySet()) {
+                if(apisToGenerate.contains(m)) {
+                    updatedPaths.put(m, paths.get(m));
+                }
+            }
+            paths = updatedPaths;
+        }
+        for (String tag : paths.keySet()) {
+            try {
+                List<CodegenOperation> ops = paths.get(tag);
+                Collections.sort(ops, new Comparator<CodegenOperation>() {
+                    @Override
+                    public int compare(CodegenOperation one, CodegenOperation another) {
+                        return ObjectUtils.compare(one.operationId, another.operationId);
+                    }
+                });
+                Map<String, Object> operation = processOperations(config, tag, ops, allModels);
+
+                operation.put("basePath", basePath);
+                operation.put("basePathWithoutHost", basePathWithoutHost);
+                operation.put("contextPath", contextPath);
+                operation.put("baseName", tag);
+                operation.put("modelPackage", config.modelPackage());
+                operation.putAll(config.additionalProperties());
+                operation.put("classname", config.toAcceptanceName(tag));
+                operation.put("classVarName", config.toAcceptanceVarName(tag));
+                operation.put("importPath", config.toAcceptanceImport(tag));
+                operation.put("classFilename", config.toAcceptanceFilename(tag));
+
+                if(!config.vendorExtensions().isEmpty()) {
+                    operation.put("vendorExtensions", config.vendorExtensions());
+                }
+
+                // Pass sortParamsByRequiredFlag through to the Mustache template...
+                boolean sortParamsByRequiredFlag = true;
+                if (this.config.additionalProperties().containsKey(CodegenConstants.SORT_PARAMS_BY_REQUIRED_FLAG)) {
+                    sortParamsByRequiredFlag = Boolean.valueOf(this.config.additionalProperties().get(CodegenConstants.SORT_PARAMS_BY_REQUIRED_FLAG).toString());
+                }
+                operation.put("sortParamsByRequiredFlag", sortParamsByRequiredFlag);
+
+                allOperations.add(new HashMap<String, Object>(operation));
+                for (int i = 0; i < allOperations.size(); i++) {
+                    Map<String, Object> oo = (Map<String, Object>) allOperations.get(i);
+                    if (i < (allOperations.size() - 1)) {
+                        oo.put("hasMore", "true");
+                    }
+                }
+
+                for (String templateName : config.apiTemplateFiles().keySet()) {
+                    String filename = config.acceptanceFilename(templateName, tag);
+                    if (!config.shouldOverwrite(filename) && new File(filename).exists()) {
+                        LOGGER.info("Skipped overwriting " + filename);
+                        continue;
+                    }
+
+                    File written = processTemplateToFile(operation, templateName, filename);
+                    if(written != null) {
+                        files.add(written);
+                    }
+                }
+
+                if(generateApiTests) {
+                    // to generate api test files
+                    for (String templateName : config.apiTestTemplateFiles().keySet()) {
+                        String filename = config.apiTestFilename(templateName, tag);
+                        // do not overwrite test file that already exists
+                        if (new File(filename).exists()) {
+                            LOGGER.info("File exists. Skipped overwriting " + filename);
+                            continue;
+                        }
+
+                        File written = processTemplateToFile(operation, templateName, filename);
+                        if (written != null) {
+                            files.add(written);
+                        }
+                    }
+                }
+
+
+                if(generateApiDocumentation) {
+                    // to generate api documentation files
+                    for (String templateName : config.apiDocTemplateFiles().keySet()) {
+                        String filename = config.apiDocFilename(templateName, tag);
+                        if (!config.shouldOverwrite(filename) && new File(filename).exists()) {
+                            LOGGER.info("Skipped overwriting " + filename);
+                            continue;
+                        }
+
+                        File written = processTemplateToFile(operation, templateName, filename);
+                        if (written != null) {
+                            files.add(written);
+                        }
+                    }
+                }
+
+            } catch (Exception e) {
+                throw new RuntimeException("Could not generate api file for '" + tag + "'", e);
+            }
+        }
+        if (System.getProperty("debugOperations") != null) {
+            LOGGER.info("############ Operation info ############");
+            Json.prettyPrint(allOperations);
+        }
+
+    }
+
     private void generateApis(List<File> files, List<Object> allOperations, List<Object> allModels) {
         if (!generateApis) {
             return;
@@ -723,6 +838,7 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
         // apis
         List<Object> allOperations = new ArrayList<Object>();
         generateApis(files, allOperations, allModels);
+        generateAcceptance(files, allOperations, allModels);
 
         // supporting files
         Map<String, Object> bundle = buildSupportFileBundle(allOperations, allModels);
