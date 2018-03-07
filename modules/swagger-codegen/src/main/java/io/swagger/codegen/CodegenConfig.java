@@ -111,6 +111,8 @@ public interface CodegenConfig {
 
     Map<String, String> apiTemplateFiles();
 
+    Map<String, String> acceptanceTemplateFiles();
+
     Map<String, String> modelTemplateFiles();
 
     Map<String, String> apiTestTemplateFiles();

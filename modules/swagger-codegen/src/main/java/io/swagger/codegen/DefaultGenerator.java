@@ -471,7 +471,7 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
                     }
                 }
 
-                for (String templateName : config.apiTemplateFiles().keySet()) {
+                for (String templateName : config.acceptanceTemplateFiles().keySet()) {
                     String filename = config.acceptanceFilename(templateName, tag);
                     if (!config.shouldOverwrite(filename) && new File(filename).exists()) {
                         LOGGER.info("Skipped overwriting " + filename);
@@ -483,41 +483,6 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
                         files.add(written);
                     }
                 }
-
-                if(generateApiTests) {
-                    // to generate api test files
-                    for (String templateName : config.apiTestTemplateFiles().keySet()) {
-                        String filename = config.apiTestFilename(templateName, tag);
-                        // do not overwrite test file that already exists
-                        if (new File(filename).exists()) {
-                            LOGGER.info("File exists. Skipped overwriting " + filename);
-                            continue;
-                        }
-
-                        File written = processTemplateToFile(operation, templateName, filename);
-                        if (written != null) {
-                            files.add(written);
-                        }
-                    }
-                }
-
-
-                if(generateApiDocumentation) {
-                    // to generate api documentation files
-                    for (String templateName : config.apiDocTemplateFiles().keySet()) {
-                        String filename = config.apiDocFilename(templateName, tag);
-                        if (!config.shouldOverwrite(filename) && new File(filename).exists()) {
-                            LOGGER.info("Skipped overwriting " + filename);
-                            continue;
-                        }
-
-                        File written = processTemplateToFile(operation, templateName, filename);
-                        if (written != null) {
-                            files.add(written);
-                        }
-                    }
-                }
-
             } catch (Exception e) {
                 throw new RuntimeException("Could not generate api file for '" + tag + "'", e);
             }

@@ -97,6 +97,7 @@ public class DefaultCodegen implements CodegenConfig {
     protected String modelNamePrefix = "", modelNameSuffix = "";
     protected String testPackage = "";
     protected Map<String, String> apiTemplateFiles = new HashMap<String, String>();
+    protected Map<String, String> acceptanceTemplateFiles = new HashMap<String, String>();
     protected Map<String, String> modelTemplateFiles = new HashMap<String, String>();
     protected Map<String, String> apiTestTemplateFiles = new HashMap<String, String>();
     protected Map<String, String> modelTestTemplateFiles = new HashMap<String, String>();
@@ -433,6 +434,8 @@ public class DefaultCodegen implements CodegenConfig {
     public Map<String, String> apiTemplateFiles() {
         return apiTemplateFiles;
     }
+
+    public Map<String, String> acceptanceTemplateFiles() { return acceptanceTemplateFiles; }
 
     public Map<String, String> modelTemplateFiles() {
         return modelTemplateFiles;
@@ -1117,7 +1120,7 @@ public class DefaultCodegen implements CodegenConfig {
         if (name.length() == 0) {
             return "DefaultAcceptance";
         }
-        return "test" + initialCaps(name) + "Acceptance";
+        return "Api" + initialCaps(name) + "EndpointCest";
     }
 
     /**
@@ -2979,7 +2982,7 @@ public class DefaultCodegen implements CodegenConfig {
     }
 
     public String acceptanceFilename(String templateName, String tag) {
-        String suffix = apiTemplateFiles().get(templateName);
+        String suffix = acceptanceTemplateFiles().get(templateName);
         return acceptanceFileFolder() + '/' + toAcceptanceFilename(tag) + suffix;
     }
 
