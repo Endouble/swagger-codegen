@@ -439,7 +439,11 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
                         return ObjectUtils.compare(one.operationId, another.operationId);
                     }
                 });
+
                 Map<String, Object> operation = processOperations(config, tag, ops, allModels);
+                Map<String, Object> operations = (Map<String, Object>) operation.get("operations");
+                operations.put("classname", config.toAcceptanceName(tag));
+                operation.put("operations", operations);
 
                 operation.put("basePath", basePath);
                 operation.put("basePathWithoutHost", basePathWithoutHost);

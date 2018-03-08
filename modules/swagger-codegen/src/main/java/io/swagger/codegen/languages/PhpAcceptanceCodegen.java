@@ -57,7 +57,7 @@ public class PhpAcceptanceCodegen extends AbstractPhpCodegen
         srcBasePath = "";
 
         // template files want to be ignored
-        //apiTemplateFiles.clear();
+        apiTemplateFiles.clear();
         modelTemplateFiles.clear();
         apiTestTemplateFiles.clear();
         apiDocTemplateFiles.clear();
