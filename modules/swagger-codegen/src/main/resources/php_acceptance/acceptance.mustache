@@ -10,16 +10,19 @@ use Codeception\Util\HttpCode;
     /**
      * Operation {{{operationId}}}
      *
-     * {{{summary}}}.
+     * {{{summary}}}
      *
-  {{#pathParams}}   * @param {{dataType}} ${{paramName}} {{description}} {{#required}}(required){{/required}}{{^required}}(optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}
-  {{/pathParams}}   * @param AcceptanceTester $I
+     * @param AcceptanceTester $I
      * @throws \Exception
      */
-    public function {{operationId}}({{#pathParams}}${{paramName}}{{#hasMore}}, {{/hasMore}}{{/pathParams}}AcceptanceTester $I)
+    public function {{operationId}}(AcceptanceTester $I)
     {
-        $I->send{{httpMethod}}('{{path}}');
+        {{#if pathParams}}{{#pathParams}}${{paramName}} = ''; //{{description}} {{#required}}(required){{/required}}{{^required}}(optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}
+        {{/pathParams}}
+        $path = str_replace([{{#pathParams}}'\\{' . '{{baseName}}' . '\\}'{{#has this 'more'}}, {{/has}}{{/pathParams}}], [{{#pathParams}}${{paramName}}{{#has this 'more'}}, {{/has}}{{/pathParams}}], '{{path}}');{{else}}$path = '{{path}}';{{/if}}
 
+        $I->send{{httpMethod}}($path);
+        $I->seeResponseCodeIs({{#responses}}{{^isWildcard}}{{#dataType}}{{code}}{{/dataType}}{{/isWildcard}}{{/responses}});
     }
     {{/operation}}
 }

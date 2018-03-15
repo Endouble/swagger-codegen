@@ -1110,11 +1110,11 @@ public class DefaultCodegen implements CodegenConfig {
     }
 
     /**
-     * Output the API (class) name (capitalized) ending with "Api"
-     * Return DefaultApi if name is empty
+     * Output the Acceptance (class) name (capitalized) beginning with "Api" ending with "EndpointCest"
+     * Return DefaultAcceptance if name is empty
      *
-     * @param name the name of the Api
-     * @return capitalized Api name ending with "Api"
+     * @param name the name of the Acceptance
+     * @return capitalized Acceptance name beginning with "Api" ending with "EndpointCest"
      */
     public String toAcceptanceName(String name) {
         if (name.length() == 0) {
@@ -2121,6 +2121,7 @@ public class DefaultCodegen implements CodegenConfig {
             codegenResponse.getVendorExtensions().put(CodegenConstants.IS_PRIMITIVE_TYPE_EXT_NAME, Boolean.TRUE);
             codegenResponse.getVendorExtensions().put(CodegenConstants.IS_SIMPLE_TYPE_EXT_NAME, Boolean.TRUE);
         }
+
         return codegenResponse;
     }
 
