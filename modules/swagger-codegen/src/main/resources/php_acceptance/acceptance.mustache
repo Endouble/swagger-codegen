@@ -23,6 +23,7 @@ use Codeception\Util\HttpCode;
 
         $I->send{{httpMethod}}($path);
         $I->seeResponseCodeIs({{#responses}}{{^isWildcard}}{{#dataType}}{{code}}{{/dataType}}{{/isWildcard}}{{/responses}});
+        {{#produces}}{{#ifEquals mediaType 'application/json'}}$I->seeResponseIsJson();{{else}}$I->seeResponseIsXml();{{/ifEquals}}{{/produces}}{{^produces}}{{/produces}}
     }
     {{/operation}}
 }

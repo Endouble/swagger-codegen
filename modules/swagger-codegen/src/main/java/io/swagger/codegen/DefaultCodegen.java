@@ -4,10 +4,7 @@ import com.github.jknack.handlebars.Handlebars;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.samskivert.mustache.Mustache.Compiler;
-import io.swagger.codegen.languages.helpers.HasHelper;
-import io.swagger.codegen.languages.helpers.HasNotHelper;
-import io.swagger.codegen.languages.helpers.IsHelper;
-import io.swagger.codegen.languages.helpers.IsNotHelper;
+import io.swagger.codegen.languages.helpers.*;
 import io.swagger.codegen.utils.ModelUtils;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -3231,6 +3228,7 @@ public class DefaultCodegen implements CodegenConfig {
         handlebars.registerHelper(HasHelper.NAME, new HasHelper());
         handlebars.registerHelper(IsNotHelper.NAME, new IsNotHelper());
         handlebars.registerHelper(HasNotHelper.NAME, new HasNotHelper());
+        handlebars.registerHelper(IfEqualsHelper.NAME, new IfEqualsHelper());
     }
 
     /**
