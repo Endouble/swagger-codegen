@@ -1,10 +1,17 @@
 <?php
 declare(strict_types=1);
 
-{{>licenseInfo}}
 use Codeception\Util\HttpCode;
 
-{{#operations}}class {{classname}}
+{{>licenseInfo}}
+
+{{#operations}}/**
+ * Class {{classname}}
+ *
+ * Acceptance tests for the {{classVarName}} endpoint.
+ *
+ */
+class {{classname}}
 {
     {{#operation}}
     /**
@@ -22,8 +29,8 @@ use Codeception\Util\HttpCode;
         $path = str_replace([{{#pathParams}}'\\{' . '{{baseName}}' . '\\}'{{#has this 'more'}}, {{/has}}{{/pathParams}}], [{{#pathParams}}${{paramName}}{{#has this 'more'}}, {{/has}}{{/pathParams}}], '{{path}}');{{else}}$path = '{{path}}';{{/if}}
 
         $I->send{{httpMethod}}($path);
-        $I->seeResponseCodeIs({{#responses}}{{^isWildcard}}{{#dataType}}{{code}}{{/dataType}}{{/isWildcard}}{{/responses}});
-        {{#produces}}{{#ifEquals mediaType 'application/json'}}$I->seeResponseIsJson();{{else}}$I->seeResponseIsXml();{{/ifEquals}}{{/produces}}{{^produces}}{{/produces}}
+        $I->seeResponseCodeIs(HttpCode::{{#responses}}{{#dataType}}{{message}}{{/dataType}}{{/responses}});
+        {{#produces}}{{#ifEquals mediaType 'application/json'}}$I->seeResponseIsJson();{{else}}$I->seeResponseIsXml();{{/ifEquals}}{{/produces}}{{^produces}}{{/produces}}        
     }
     {{/operation}}
 }

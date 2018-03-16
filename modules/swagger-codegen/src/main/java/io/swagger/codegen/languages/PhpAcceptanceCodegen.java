@@ -63,4 +63,12 @@ public class PhpAcceptanceCodegen extends AbstractPhpCodegen
         apiDocTemplateFiles.clear();
         modelDocTemplateFiles.clear();
     }
+
+    @Override
+    public Map<String, Object> postProcessOperations(Map<String, Object> objs) {
+        objs = super.postProcessOperations(objs);
+        Map<String, Object> operations = (Map<String, Object>) objs.get("operations");
+        operations.put("test", "dit is een test");
+        return objs;
+    }
 }
