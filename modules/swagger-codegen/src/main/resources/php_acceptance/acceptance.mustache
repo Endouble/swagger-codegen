@@ -24,14 +24,20 @@ class {{classname}}
      */
     public function {{operationId}}(AcceptanceTester $I)
     {
+        {{#if postMethod}}{{#ifNotEquals httpMethod 'POST'}}// Make sure that at least one {{classVarName}} is present. 
+        $this->{{postMethod}}($I);
+
+        {{/ifNotEquals}}{{/if ~}} 
+
         {{#if pathParams}}{{#pathParams}}${{paramName}} = ''; //{{description}} {{#required}}(required){{/required}}{{^required}}(optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}
-        {{/pathParams}}
-        $path = str_replace([{{#pathParams}}'\\{' . '{{baseName}}' . '\\}'{{#has this 'more'}}, {{/has}}{{/pathParams}}], [{{#pathParams}}${{paramName}}{{#has this 'more'}}, {{/has}}{{/pathParams}}], '{{path}}');{{else}}$path = '{{path}}';{{/if}}
+        {{/pathParams}}$path = str_replace([{{#pathParams}}'\\{' . '{{baseName}}' . '\\}'{{#has this 'more'}}, {{/has}}{{/pathParams}}], [{{#pathParams}}${{paramName}}{{#has this 'more'}}, {{/has}}{{/pathParams}}], '{{path}}');{{else}}$path = '{{path}}';{{/if}}
 
         $I->send{{httpMethod}}($path);
         $I->seeResponseCodeIs(HttpCode::{{#responses}}{{#dataType}}{{message}}{{/dataType}}{{/responses}});
-        {{#produces}}{{#ifEquals mediaType 'application/json'}}$I->seeResponseIsJson();{{else}}$I->seeResponseIsXml();{{/ifEquals}}{{/produces}}{{^produces}}{{/produces}}        
+        {{#produces}}{{#ifEquals mediaType 'application/json'}}$I->seeResponseIsJson();{{else}}$I->seeResponseIsXml();{{/ifEquals}}{{/produces}}{{^produces}}{{/produces}}
+
+        {{requestBody}}
     }
     {{/operation}}
 }
-{{/operations}}
+{{/operations ~}}

@@ -3229,6 +3229,7 @@ public class DefaultCodegen implements CodegenConfig {
         handlebars.registerHelper(IsNotHelper.NAME, new IsNotHelper());
         handlebars.registerHelper(HasNotHelper.NAME, new HasNotHelper());
         handlebars.registerHelper(IfEqualsHelper.NAME, new IfEqualsHelper());
+        handlebars.registerHelper(IfNotEqualsHelper.NAME, new IfNotEqualsHelper());
     }
 
     /**
