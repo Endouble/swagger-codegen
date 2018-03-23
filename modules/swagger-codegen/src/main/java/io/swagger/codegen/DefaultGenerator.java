@@ -1094,10 +1094,14 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
         if (templateFile.startsWith(config.templateDir())) {
             templateFile = templateFile.replaceFirst(config.templateDir(), StringUtils.EMPTY);
         }
-        final TemplateLoader templateLoader = new ClassPathTemplateLoader("/" + config.templateDir(), ".mustache");
+        String extension = ".mustache";
+        if(templateFile.contains(".handlebars")){
+            extension = ".handlebars";
+        }
+        final TemplateLoader templateLoader = new ClassPathTemplateLoader("/" + config.templateDir(), extension);
         final Handlebars handlebars = new Handlebars(templateLoader);
         config.addHandlebarHelpers(handlebars);
-        return handlebars.compile(templateFile.replace(".mustache", StringUtils.EMPTY));
+        return handlebars.compile(templateFile.replace(extension, StringUtils.EMPTY));
     }
 
     private boolean isJavaCodegen(String name) {

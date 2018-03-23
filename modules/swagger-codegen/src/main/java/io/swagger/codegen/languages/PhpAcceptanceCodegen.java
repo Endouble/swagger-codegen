@@ -3,6 +3,7 @@ package io.swagger.codegen.languages;
 import io.swagger.codegen.CodegenOperation;
 import io.swagger.codegen.CodegenType;
 import io.swagger.codegen.SupportingFile;
+import io.swagger.codegen.CodegenParameter;
 
 import java.io.File;
 import java.util.Collections;
@@ -47,7 +48,7 @@ public class PhpAcceptanceCodegen extends AbstractPhpCodegen
 
     public PhpAcceptanceCodegen() {
         super();
-
+        acceptanceTemplateFiles.put("acceptance.handlebars", ".php");
         embeddedTemplateDir = templateDir = "php_acceptance";
 
         /*
@@ -69,10 +70,25 @@ public class PhpAcceptanceCodegen extends AbstractPhpCodegen
         objs = super.postProcessOperations(objs);
         Map<String, Object> operations = (Map<String, Object>) objs.get("operations");
         List<CodegenOperation> ops = (List<CodegenOperation>) operations.get("operation");
+
+        int operationCounter = 0;
+        
         for (CodegenOperation operation : ops) {
+            String path = operation.path;
+            if (operation.pathParams.size() > 0) {
+                for (CodegenParameter pathParam : operation.pathParams) {
+                    path = path.replace("{" + pathParam.baseName + "}", "$" + pathParam.baseName);
+                }
+            }
+
+            CodegenOperation pathResolver = operation;
+            pathResolver.resolvePath = path;
+            ops.set(operationCounter, pathResolver);
+
             if (operation.httpMethod.equals("POST")) {
                 operations.put("postMethod", operation.operationId);
             }
+            operationCounter++;
         }
         return objs;
     }

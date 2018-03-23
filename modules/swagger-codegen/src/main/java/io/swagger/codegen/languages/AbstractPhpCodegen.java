@@ -61,7 +61,6 @@ public abstract class AbstractPhpCodegen extends DefaultCodegen implements Codeg
 
         modelTemplateFiles.put("model.mustache", ".php");
         apiTemplateFiles.put("api.mustache", ".php");
-        acceptanceTemplateFiles.put("acceptance.mustache", ".php");
         apiTestTemplateFiles.put("api_test.mustache", ".php");
         modelDocTemplateFiles.put("model_doc.mustache", ".md");
         apiDocTemplateFiles.put("api_doc.mustache", ".md");

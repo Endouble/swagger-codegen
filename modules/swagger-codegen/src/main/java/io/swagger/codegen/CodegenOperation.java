@@ -18,7 +18,7 @@ import java.util.Arrays;
 public class CodegenOperation implements VendorExtendable {
     public final List<CodegenProperty> responseHeaders = new ArrayList<CodegenProperty>();
     public boolean returnTypeIsPrimitive, returnSimpleType, subresourceOperation;
-    public String path, operationId, returnType, httpMethod, returnBaseType,
+    public String path, resolvePath, operationId, returnType, httpMethod, returnBaseType,
             returnContainer, summary, unescapedNotes, notes, baseName, defaultResponse;
     public Discriminator discriminator;
     public List<Map<String, String>> consumes, produces, prioritizedContentTypes;
@@ -313,6 +313,10 @@ public class CodegenOperation implements VendorExtendable {
 
     public String getPath() {
         return path;
+    }
+
+    public String getResolvePath() {
+        return resolvePath;
     }
 
     public String getOperationId() {
