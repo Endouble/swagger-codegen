@@ -1,10 +1,6 @@
 package io.swagger.codegen;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class CodegenHelper {
 
@@ -107,5 +103,42 @@ public class CodegenHelper {
         specialCharReplacements.put("<=", "Less_Than_Or_Equal_To");
         specialCharReplacements.put(">=", "Greater_Than_Or_Equal_To");
         specialCharReplacements.put("!=", "Not_Equal");
+    }
+
+    public static String getFakerMethod(String fakerVariable, String type, String format) {
+        if (fakerVariable.isEmpty() || fakerVariable == null || type.isEmpty() || type == null) {
+            return "";
+        }
+
+        if (format == null) {
+            format = "";
+        }
+
+        HashMap<List<String>,String> keysToReplace = new HashMap<List<String>,String>();
+        keysToReplace.put(Arrays.asList("string", ""), fakerVariable + "text()");
+        keysToReplace.put(Arrays.asList("string", "date"), fakerVariable + "date()");
+        keysToReplace.put(Arrays.asList("string", "date-time"), fakerVariable + "dateTime()");
+        keysToReplace.put(Arrays.asList("string", "password"), fakerVariable + "password()");
+        keysToReplace.put(Arrays.asList("string", "uuid"), fakerVariable + "uuid");
+        keysToReplace.put(Arrays.asList("string", "uri"), fakerVariable + "url");
+        keysToReplace.put(Arrays.asList("string", "email"), fakerVariable + "email");
+        keysToReplace.put(Arrays.asList("string", "ipv4"), fakerVariable + "ipv4");
+        keysToReplace.put(Arrays.asList("string", "ipv6"), fakerVariable + "ipv6");
+        keysToReplace.put(Arrays.asList("integer", ""), fakerVariable + "numberBetween()");
+        keysToReplace.put(Arrays.asList("integer", "int32"), fakerVariable + "numberBetween()");
+        keysToReplace.put(Arrays.asList("integer", "int64"), fakerVariable + "numberBetween()");
+        keysToReplace.put(Arrays.asList("number", ""), fakerVariable + "numberBetween()");
+        keysToReplace.put(Arrays.asList("number", "float"), fakerVariable + "randomFloat()");
+        keysToReplace.put(Arrays.asList("number", "double"), fakerVariable + "randomFloat()");
+        keysToReplace.put(Arrays.asList("boolean", ""), fakerVariable + "boolean()");
+
+        if (
+            keysToReplace.get(Arrays.asList(type, format)) == null
+            || keysToReplace.get(Arrays.asList(type, format)).isEmpty()
+        ) {
+            return "null";
+        }
+
+        return keysToReplace.get(Arrays.asList(type, format));
     }
 }
