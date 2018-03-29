@@ -3,6 +3,7 @@ package io.swagger.codegen.cmd;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.codegen.CLIHelper;
 import io.swagger.codegen.ClientOptInput;
+import io.swagger.codegen.CodegenArgument;
 import io.swagger.codegen.DefaultGenerator;
 import io.swagger.codegen.config.CodegenConfigurator;
 import io.swagger.v3.core.util.Json;
@@ -46,6 +47,7 @@ public class Generate implements Runnable {
     protected String output = "";
     protected String spec;
     protected String templateDir;
+    protected String templateVersion;
     protected String auth;
     protected List<String> systemProperties = new ArrayList<>();
     protected String configFile;
@@ -72,6 +74,7 @@ public class Generate implements Runnable {
     protected String ignoreFileOverride;
     protected Boolean removeOperationIdPrefix;
     private String url;
+    private List<CodegenArgument> codegenArguments;
 
     public void setVerbose(Boolean verbose) {
         this.verbose = verbose;
@@ -91,6 +94,10 @@ public class Generate implements Runnable {
 
     public void setTemplateDir(String templateDir) {
         this.templateDir = templateDir;
+    }
+
+    public void setTemplateVersion(String templateVersion) {
+        this.templateVersion = templateVersion;
     }
 
     public void setAuth(String auth) {
@@ -197,6 +204,10 @@ public class Generate implements Runnable {
         this.url = url;
     }
 
+    public void setCodegenArguments(List<CodegenArgument> codegenArguments) {
+        this.codegenArguments = codegenArguments;
+    }
+
     @Override
     public void run() {
 
@@ -238,6 +249,10 @@ public class Generate implements Runnable {
 
         if (isNotEmpty(templateDir)) {
             configurator.setTemplateDir(templateDir);
+        }
+
+        if (isNotEmpty(templateVersion)) {
+            configurator.setTemplateVersion(templateVersion);
         }
 
         if (isNotEmpty(apiPackage)) {
@@ -298,6 +313,10 @@ public class Generate implements Runnable {
 
         if (removeOperationIdPrefix != null) {
             configurator.setRemoveOperationIdPrefix(removeOperationIdPrefix);
+        }
+
+        if (codegenArguments != null && !codegenArguments.isEmpty()) {
+            configurator.setCodegenArguments(codegenArguments);
         }
 
         applySystemPropertiesKvpList(systemProperties, configurator);
