@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class CodegenResponse implements VendorExtendable {
     public final List<CodegenProperty> headers = new ArrayList<CodegenProperty>();
-    public String code, message;
+    public String code, message, httpDescription;
     public List<Map<String, Object>> examples;
     public String dataType, baseType, containerType;
     public Object schema;
@@ -77,6 +77,8 @@ public class CodegenResponse implements VendorExtendable {
     public String getMessage() {
         return message;
     }
+
+    public String getHttpDescription() { return httpDescription; }
 
     public List<Map<String, Object>> getExamples() {
         return examples;
