@@ -1099,11 +1099,12 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
         if (templateFile.startsWith(config.templateDir())) {
             templateFile = templateFile.replaceFirst(config.templateDir(), StringUtils.EMPTY);
         }
-        String extension = ".mustache";
-        if(templateFile.contains(".handlebars")){
-            extension = ".handlebars";
+        TemplateLoader templateLoader = null;
+        if (config.additionalProperties().get(CodegenConstants.TEMPLATE_DIR) != null) {
+            templateLoader = new FileTemplateLoader(config.templateDir(), ".mustache");
+        } else {
+            templateLoader = new ClassPathTemplateLoader("/" + config.templateDir(), ".mustache");
         }
-        final TemplateLoader templateLoader = new ClassPathTemplateLoader("/" + config.templateDir(), extension);
         final Handlebars handlebars = new Handlebars(templateLoader);
         config.addHandlebarHelpers(handlebars);
 
