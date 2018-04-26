@@ -49,7 +49,7 @@ public abstract class AbstractPhpCodegen extends DefaultCodegen implements Codeg
     protected String testBasePath = "test";
     protected String docsBasePath = "docs";
     protected String apiDirName = "Api";
-    protected String acceptanceDirName = "Acceptance";
+    protected String acceptanceDirName = "acceptance";
     protected String modelDirName = "Model";
     protected String variableNamingConvention= "snake_case";
     protected String apiDocPath = docsBasePath + File.separator + apiDirName;
