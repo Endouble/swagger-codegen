@@ -650,7 +650,6 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
                 } else {
                     templateFile = getFullTemplateFile(config, support.templateFile);
                 }
-                templateFile = templateFile.replace("\\", "/");
 
                 boolean shouldGenerate = true;
                 if(supportingFilesToGenerate != null && !supportingFilesToGenerate.isEmpty()) {
@@ -662,12 +661,9 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
 
                 if(ignoreProcessor.allowsFile(new File(outputFilename))) {
                     if (templateFile.endsWith("mustache")) {
-                        String templateName = templateFile;
-                        final com.github.jknack.handlebars.Template hTemplate = getHandlebars(templateName.replace(config.templateDir(), StringUtils.EMPTY));
+                        final com.github.jknack.handlebars.Template hTemplate = getHandlebars(templateFile);
                         String rendered = hTemplate.apply(bundle);
                         writeToFile(outputFilename, rendered);
-
-                        // writeToFile(outputFilename, tmpl.execute(bundle));
                         files.add(new File(outputFilename));
                     } else {
                         InputStream in = null;
@@ -1096,19 +1092,19 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
     }
 
     private com.github.jknack.handlebars.Template getHandlebars(String templateFile) throws IOException {
-        if (templateFile.startsWith(config.templateDir())) {
-            templateFile = templateFile.replaceFirst(config.templateDir(), StringUtils.EMPTY);
+        templateFile = templateFile.replace(".mustache", StringUtils.EMPTY).replace("\\", "/");
+        String templateDir = config.templateDir().replace(".mustache", StringUtils.EMPTY).replace("\\", "/");
+        if (templateFile.startsWith(templateDir)) {
+            templateFile = StringUtils.replaceOnce(templateFile, templateDir, StringUtils.EMPTY);
         }
         TemplateLoader templateLoader = null;
         if (config.additionalProperties().get(CodegenConstants.TEMPLATE_DIR) != null) {
-            templateLoader = new FileTemplateLoader(config.templateDir(), ".mustache");
+            templateLoader = new FileTemplateLoader(templateDir, ".mustache");
         } else {
-            templateLoader = new ClassPathTemplateLoader("/" + config.templateDir(), ".mustache");
+            templateLoader = new ClassPathTemplateLoader("/" + templateDir, ".mustache");
         }
         final Handlebars handlebars = new Handlebars(templateLoader);
         config.addHandlebarHelpers(handlebars);
-
-        templateFile = templateFile.replace(".mustache", StringUtils.EMPTY).replace("\\", "/");
         return handlebars.compile(templateFile);
     }
 
